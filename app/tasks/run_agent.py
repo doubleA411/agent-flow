@@ -6,11 +6,11 @@ from app.models.agent import Run, RunStatus
 @celery_app.task(bind=True, max_retries=3)
 def execute_run(self, run_id: str):
     db = SessionLocal()
+    run = None
     try:
         run = db.query(Run).filter(Run.id == run_id).first()
         if not run:
             return
-
         run.status = RunStatus.running
         db.commit()
 
