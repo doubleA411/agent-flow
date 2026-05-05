@@ -18,8 +18,9 @@ class Agent(Base):
 
 class Run(Base):
     __tablename__ = "runs"
-    id         = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    agent_id   = Column(UUID(as_uuid=True), nullable=False)
-    status     = Column(Enum(RunStatus), default=RunStatus.pending)
-    output     = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    id           = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    agent_id     = Column(UUID(as_uuid=True), nullable=False)
+    status       = Column(Enum(RunStatus), default=RunStatus.pending)
+    output       = Column(Text, nullable=True)
+    callback_url = Column(String, nullable=True)   # add this
+    created_at   = Column(DateTime, default=datetime.datetime.utcnow)
