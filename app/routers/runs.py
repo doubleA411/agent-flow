@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.agent import Run
 from app.schemas.run import RunCreate, RunRead
+from app.tasks.run_agent import execute_run
 
 
 router = APIRouter()
@@ -13,6 +14,9 @@ def create_run(agent_id: str, db: Session = Depends(get_db)):
     db.add(run)
     db.commit()
     db.refresh(run)
+
+    execute_run.delay(run.id)
+
     return run
 
 @router.get("/runs/{run_id}", response_model=RunRead)
