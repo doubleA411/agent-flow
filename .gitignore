@@ -1,0 +1,36 @@
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+agent-flow/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Alembic compiled cache
+alembic/versions/__pycache__/
+
+# Next.js
+frontend/.next/
+frontend/node_modules/
+frontend/.env.local
+frontend/out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Prometheus multiprocess
+/tmp/prometheus_multiproc/
