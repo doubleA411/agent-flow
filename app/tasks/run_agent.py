@@ -104,11 +104,19 @@ def execute_run(self, run_id: str, task_prompt: str = None, message_id: str = No
         duration = time.time() - start
         run_counter.labels(status="failed").inc()
         log.error("run_failed", run_id=run_id, error=str(exc),
-                  duration_seconds=round(duration, 2))
+                duration_seconds=round(duration, 2))
         if run:
             run.status = RunStatus.failed
             db.commit()
-            broadcast_sync(run_id, {"status": "failed", "output": str(exc)})
+
+            # Update assistant message to show failure
+            if message_id:
+                msg = db.query(Message).filter(Message.id == message_id).first()
+                if msg:
+                    msg.content = f"Failed: {str(exc)}"
+                    db.commit()
+
+            broadcast_sync(run_id, {"status": "failed", "output": str(exc), "message_id": message_id})
         raise self.retry(exc=exc, countdown=30)
     finally:
         db.close()

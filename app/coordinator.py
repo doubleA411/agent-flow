@@ -3,30 +3,71 @@ from app.llm.base import LLMMessage
 from app.llm.router import get_provider
 from app.config import settings
 
-COORDINATOR_SYSTEM_PROMPT = """You are a coordinator that routes user requests to the right specialist agents.
+COORDINATOR_SYSTEM_PROMPT = """You are a coordinator that routes user requests to specialist agents.
 
 Available agents:
-- research: web research, summarization, finding information, market analysis
-- engineering: code review, creating tickets, debugging, technical tasks
-- finance: revenue data, financial reports, forecasts, budget analysis
-- sales: drafting emails, CRM updates, outreach, investor communications
+- general: greetings, casual conversation, simple factual questions with one-word or one-sentence answers
+- research: ANY question asking for information, lists, explanations, trends, comparisons, or market data
+- engineering: code, debugging, architecture, technical tasks, software development
+- finance: revenue, financial reports, forecasts, budgets, metrics, investment analysis
+- sales: emails, CRM, outreach, investor communications, pitch writing
 - ops: infrastructure, scheduling, alerts, operational tasks
-- data: SQL queries, data analysis, charts, metrics
-
-Analyze the user message and return a JSON array of tasks.
-Each task must have: agent (string) and task (string describing what to do).
+- data: SQL queries, data analysis, charts, metrics dashboards
 
 Rules:
-- If multiple agents are needed, include all of them — they run in parallel
-- If only one agent is needed, return an array with one item
-- Keep task descriptions concise and specific
-- Only use agents from the list above
+- Return ONLY a JSON array, no other text
+- Each item must have: agent (string) and task (string)
+- NEVER use both general and research for the same request — research handles all information questions
+- Use general ONLY for greetings like "hi", "hello", or truly trivial questions like "what is 2+2"
+- Use the MINIMUM number of agents — default to ONE agent unless the request clearly needs multiple
+- Never repeat the same agent type twice
 
-Return ONLY valid JSON, no other text. Example:
+Example for "what are the latest smartphones?":
+[{"agent": "research", "task": "List the latest smartphones available in the market"}]
+
+Example for "hi there":
+[{"agent": "general", "task": "Greet the user"}]
+
+Example for "pull revenue and draft investor email":
 [
   {"agent": "finance", "task": "Pull last month revenue figures"},
-  {"agent": "sales", "task": "Draft investor update based on revenue"}
+  {"agent": "sales", "task": "Draft investor update email based on revenue"}
 ]"""
+
+
+def build_context_preamble(org_context=None, memories=None) -> str:
+    """Build a context block injected into agent prompts."""
+    parts: list[str] = []
+
+    if org_context and org_context.is_active:
+        lines = ["## Company context"]
+        if org_context.company_name:
+            lines.append(f"Company: {org_context.company_name}")
+        if org_context.industry:
+            lines.append(f"Industry: {org_context.industry}")
+        if org_context.team_size:
+            lines.append(f"Team size: {org_context.team_size}")
+        if org_context.mission:
+            lines.append(f"Mission: {org_context.mission}")
+        if org_context.product_description:
+            lines.append(f"Product: {org_context.product_description}")
+        if org_context.goals:
+            lines.append(f"Goals: {org_context.goals}")
+        if org_context.extra:
+            lines.append(f"Additional context: {org_context.extra}")
+        if len(lines) > 1:
+            parts.append("\n".join(lines))
+
+    if memories:
+        mem_lines = ["## Remembered facts"]
+        for m in memories[:20]:
+            mem_lines.append(f"- {m.key}: {m.value}")
+        parts.append("\n".join(mem_lines))
+
+    if parts:
+        return "\n\n".join(parts) + "\n\n---\n\n"
+    return ""
+
 
 async def coordinate(
     user_message: str,
@@ -37,8 +78,12 @@ async def coordinate(
     llm = get_provider(provider)
 
     messages = []
-    for h in history[-10:]:  # last 10 messages for context
-        messages.append(LLMMessage(role=h["role"], content=h["content"]))
+    for h in history[-10:]:
+        if h["role"] == "coordinator":
+            continue
+        role = h["role"] if h["role"] in ["user", "assistant"] else "user"
+        messages.append(LLMMessage(role=role, content=h["content"]))
+
     messages.append(LLMMessage(role="user", content=user_message))
 
     response = await llm.call(
@@ -53,5 +98,4 @@ async def coordinate(
             raise ValueError("Expected a list")
         return plan
     except Exception:
-        # fallback — treat as research task if coordinator output is invalid
-        return [{"agent": "research", "task": user_message}]
+        return [{"agent": "general", "task": user_message}]

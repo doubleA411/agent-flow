@@ -2,9 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
+from app.models.agent import Agent
 from app.schemas.user import UserRegister, UserLogin, TokenResponse, UserRead
 from app.auth import hash_password, verify_password, create_token, get_current_user
 from app.logging_config import log
+from app.agents.definitions import AGENT_DEFINITIONS
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -22,6 +24,19 @@ def register(body: UserRegister, db: Session = Depends(get_db)):
     db.add(user)
     db.commit()
     db.refresh(user)
+
+    # Auto-create general agent for every new user
+    general = next(d for d in AGENT_DEFINITIONS if d["agent_type"] == "general")
+    default_agent = Agent(
+        user_id=user.id,
+        name=general["name"],
+        agent_type=general["agent_type"],
+        prompt=general["prompt"],
+        provider="groq",
+        model="llama-3.1-8b-instant"
+    )
+    db.add(default_agent)
+    db.commit()
 
     token = create_token(str(user.id))
     log.info("user_registered", user_id=str(user.id), email=user.email)

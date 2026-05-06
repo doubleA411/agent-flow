@@ -11,9 +11,17 @@ class AgentCreate(BaseModel):
 class AgentRead(BaseModel):
     id: UUID
     name: str
+    agent_type: str | None
     prompt: str
     provider: str
     model: str
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+class AgentUpdate(BaseModel):
+    name: str | None = None
+    agent_type: str | None = None
+    prompt: str | None = None
+    provider: str | None = None
+    model: str | None = None

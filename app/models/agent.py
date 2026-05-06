@@ -12,6 +12,7 @@ class RunStatus(str, enum.Enum):
 class Agent(Base):
     __tablename__ = "agents"
     id         = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    agent_type = Column(String, nullable=True) 
     user_id    = Column(UUID(as_uuid=True), nullable=False)
     name       = Column(String, nullable=False)
     prompt     = Column(Text, nullable=False)
@@ -27,9 +28,10 @@ class Run(Base):
     __tablename__ = "runs"
     id           = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id      = Column(UUID(as_uuid=True), nullable=False)
-    agent_id     = Column(UUID(as_uuid=True), nullable=False)
     session_id   = Column(UUID(as_uuid=True), nullable=True)
+    agent_id     = Column(UUID(as_uuid=True), nullable=False)
     status       = Column(Enum(RunStatus), default=RunStatus.pending)
     output       = Column(Text, nullable=True)
+    task_prompt  = Column(Text, nullable=True)   # add this
     callback_url = Column(String, nullable=True)
     created_at   = Column(DateTime, default=datetime.datetime.utcnow)
