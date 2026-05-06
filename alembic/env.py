@@ -22,6 +22,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 from app.database import Base
 from app.models import agent  # noqa — loads models so Alembic sees them
+from app.models import user
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

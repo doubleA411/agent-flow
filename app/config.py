@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     OLLAMA_URL: str = "http://localhost:11434"
 
+    JWT_SECRET: str = "supersecretkey_change_this_in_production"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRE_MINUTES: int = 10080
+
     class Config:
         env_file = ".env"
 

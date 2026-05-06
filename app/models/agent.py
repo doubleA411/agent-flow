@@ -12,6 +12,7 @@ class RunStatus(str, enum.Enum):
 class Agent(Base):
     __tablename__ = "agents"
     id         = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id    = Column(UUID(as_uuid=True), nullable=False)
     name       = Column(String, nullable=False)
     prompt     = Column(Text, nullable=False)
     provider   = Column(String, default="ollama")
@@ -25,6 +26,7 @@ class Agent(Base):
 class Run(Base):
     __tablename__ = "runs"
     id           = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id      = Column(UUID(as_uuid=True), nullable=False)
     agent_id     = Column(UUID(as_uuid=True), nullable=False)
     status       = Column(Enum(RunStatus), default=RunStatus.pending)
     output       = Column(Text, nullable=True)
