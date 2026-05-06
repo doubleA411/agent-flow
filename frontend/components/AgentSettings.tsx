@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { X, Save, Loader, ChevronDown } from "lucide-react"
 
-const API = "http://localhost:8000/api/v1"
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1"
 
 type Agent = {
   id: string

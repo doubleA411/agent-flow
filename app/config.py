@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 10080
 
+    # Frontend origin — set to your Vercel URL in production
+    FRONTEND_URL: str = "http://localhost:3000"
+
     class Config:
         env_file = ".env"
 
