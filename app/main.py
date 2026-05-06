@@ -11,7 +11,7 @@ import sentry_sdk
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import make_asgi_app, CollectorRegistry, multiprocess, generate_latest, CONTENT_TYPE_LATEST
-from app.routers import agents, runs, webhooks, websocket, auth
+from app.routers import agents, runs, webhooks, websocket, auth, sessions
 from app.logging_config import log
 
 if settings.SENTRY_DSN:
@@ -32,6 +32,7 @@ app.include_router(agents.router, prefix="/api/v1")
 app.include_router(runs.router, prefix="/api/v1")
 app.include_router(webhooks.router, prefix="/api/v1")
 app.include_router(websocket.router, prefix="/api/v1")
+app.include_router(sessions.router, prefix="/api/v1")
 
 @app.get("/metrics")
 def metrics():

@@ -1,13 +1,15 @@
 import uuid as uuid_lib
 import httpx
+import time
+import asyncio
 from app.worker import celery_app
 from app.database import SessionLocal
 from app.models.agent import Run, RunStatus, Agent
+from app.models.session import Message
 from app.logging_config import setup_logging, log
 from app.metrics import run_counter, run_duration, queue_depth
 from app.llm.router import get_provider
 from app.llm.base import LLMMessage
-import time
 
 setup_logging()
 
@@ -23,7 +25,7 @@ def broadcast_sync(run_id: str, data: dict):
         log.warn("broadcast_failed", run_id=run_id, error=str(e))
 
 @celery_app.task(bind=True, max_retries=3)
-def execute_run(self, run_id: str):
+def execute_run(self, run_id: str, task_prompt: str = None, message_id: str = None):
     run_id = str(uuid_lib.UUID(str(run_id)))
     db = SessionLocal()
     run = None
@@ -50,17 +52,25 @@ def execute_run(self, run_id: str):
         pending_count = db.query(Run).filter(Run.status == RunStatus.pending).count()
         queue_depth.set(pending_count)
 
-        # Real LLM call
+        # Use task_prompt if provided (from coordinator), otherwise use agent's default prompt
+        prompt = task_prompt or agent.prompt
+
         provider = get_provider(agent.provider)
-        import asyncio
         response = asyncio.run(provider.call(
-            messages=[LLMMessage(role="user", content=agent.prompt)],
+            messages=[LLMMessage(role="user", content=prompt)],
             model=agent.model,
         ))
 
         run.status = RunStatus.success
         run.output = response.content
         db.commit()
+
+        # Update the assistant message in the session with the real response
+        if message_id:
+            msg = db.query(Message).filter(Message.id == message_id).first()
+            if msg:
+                msg.content = response.content
+                db.commit()
 
         duration = time.time() - start
         run_duration.observe(duration)
@@ -74,7 +84,11 @@ def execute_run(self, run_id: str):
                  output_tokens=response.output_tokens,
                  duration_seconds=round(duration, 2))
 
-        broadcast_sync(run_id, {"status": "success", "output": response.content})
+        broadcast_sync(run_id, {
+            "status": "success",
+            "output": response.content,
+            "message_id": message_id
+        })
 
         if run.callback_url:
             try:

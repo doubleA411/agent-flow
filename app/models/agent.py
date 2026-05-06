@@ -28,6 +28,7 @@ class Run(Base):
     id           = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id      = Column(UUID(as_uuid=True), nullable=False)
     agent_id     = Column(UUID(as_uuid=True), nullable=False)
+    session_id   = Column(UUID(as_uuid=True), nullable=True)
     status       = Column(Enum(RunStatus), default=RunStatus.pending)
     output       = Column(Text, nullable=True)
     callback_url = Column(String, nullable=True)
