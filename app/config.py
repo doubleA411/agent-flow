@@ -7,6 +7,12 @@ class Settings(BaseSettings):
     SENTRY_DSN: str = ""
     PROMETHEUS_MULTIPROC_DIR: str = "/tmp/prometheus_multiproc"
 
+    # LLM providers — leave blank if you don't have a key
+    ANTHROPIC_API_KEY: str = ""
+    OPENAI_API_KEY: str = ""
+    GROQ_API_KEY: str = ""
+    OLLAMA_URL: str = "http://localhost:11434"
+
     class Config:
         env_file = ".env"
 

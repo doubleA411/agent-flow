@@ -9,8 +9,9 @@ os.makedirs(settings.PROMETHEUS_MULTIPROC_DIR, exist_ok=True)
 
 import sentry_sdk
 from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import make_asgi_app, CollectorRegistry, multiprocess, generate_latest, CONTENT_TYPE_LATEST
-from app.routers import agents, runs, webhooks
+from app.routers import agents, runs, webhooks, websocket
 from app.logging_config import log
 
 if settings.SENTRY_DSN:
@@ -18,9 +19,18 @@ if settings.SENTRY_DSN:
 
 app = FastAPI(title="AgentFlow")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(agents.router, prefix="/api/v1")
 app.include_router(runs.router, prefix="/api/v1")
 app.include_router(webhooks.router, prefix="/api/v1")
+app.include_router(websocket.router, prefix="/api/v1")
 
 @app.get("/metrics")
 def metrics():

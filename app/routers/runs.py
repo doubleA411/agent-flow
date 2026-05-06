@@ -4,6 +4,7 @@ from app.database import get_db
 from app.models.agent import Run
 from app.schemas.run import RunCreate, RunRead
 from app.tasks.run_agent import execute_run
+import uuid as uuid_lib
 
 
 router = APIRouter()
@@ -14,7 +15,8 @@ def create_run(agent_id: str, db: Session = Depends(get_db)):
     db.add(run)
     db.commit()
     db.refresh(run)
-
+    
+    clean_id = str(uuid_lib.UUID(str(run.id)))
     execute_run.delay(run.id)
 
     return run
