@@ -1,6 +1,7 @@
 import hmac
 import hashlib
 from fastapi import APIRouter, Request, Header, HTTPException
+from app.logging_config import log
 from app.config import settings
 from app.database import SessionLocal
 from app.models.agent import Agent, Run
@@ -23,6 +24,8 @@ async def github_webhook(
 
     payload = await request.json()
     event_action = payload.get("action")
+
+    log.info("webhook_received", action=event_action, triggered=event_action == "opened")
 
     # Only trigger on PR opened events
     if event_action != "opened":
