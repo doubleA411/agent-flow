@@ -33,14 +33,14 @@ export const metadata: Metadata = {
     description: "Multi-agent orchestration workspace — coordinate specialist AI agents to research, write, code, and analyse in parallel.",
     url: APP_URL,
     siteName: "AgentFlow",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "AgentFlow" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "AgentFlow" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "AgentFlow",
     description: "Multi-agent orchestration workspace — coordinate specialist AI agents in parallel.",
-    images: ["/opengraph-image"],
+    images: ["/og.png"],
   },
 };
 
