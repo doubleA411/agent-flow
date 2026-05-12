@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
 
 /* ─── Design tokens ───────────────────────────────────────────────── */
@@ -159,107 +158,29 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* ── Hero ───────────────────────────────────────────────────── */}
-      <section style={{ position: "relative", overflow: "hidden", padding: "80px 32px 0", minHeight: 680 }}>
-        {/* Background image */}
-        <Image
-          src="/astro.jpeg"
-          alt=""
-          fill
-          style={{ objectFit: "cover", objectPosition: "center" }}
-          priority
-        />
-        {/* Overlay — dark enough for text legibility, preserves image atmosphere */}
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(180deg, rgba(31,31,41,0.72) 0%, rgba(31,31,41,0.55) 50%, rgba(31,31,41,0.85) 100%)",
-        }} />
-
-        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
-          {/* Chip */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              padding: "4px 14px",
-              border: `1px solid rgba(65,161,207,0.4)`,
-              borderRadius: 50,
-              fontSize: 13,
-              color: C.azure,
-              letterSpacing: "-0.01em",
-              background: "rgba(65,161,207,0.08)",
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.azure, display: "inline-block" }} />
-              Multi-agent AI orchestration
-            </span>
-          </div>
-
-          {/* Headline */}
-          <h1 style={{
-            fontFamily: "var(--font-display), 'Instrument Serif', ui-serif, serif",
-            fontSize: "clamp(40px, 6vw, 64px)",
-            fontWeight: 400,
-            lineHeight: 1.05,
-            letterSpacing: "-0.02em",
-            color: "#ffffff",
-            textAlign: "center",
-            maxWidth: 820,
-            margin: "0 auto 24px",
-          }}>
-            The workspace where your agents work in parallel
-          </h1>
-
-          {/* Sub */}
-          <p style={{
-            fontSize: 18,
-            fontWeight: 400,
-            lineHeight: 1.5,
-            letterSpacing: "-0.012em",
-            color: "rgba(255,255,255,0.6)",
-            textAlign: "center",
-            maxWidth: 560,
-            margin: "0 auto 40px",
-          }}>
-            Dispatch a single prompt. Watch research, finance, engineering, and sales agents execute simultaneously — coordinated, grounded in your company context.
-          </p>
-
-          {/* CTAs */}
-          <div style={{ display: "flex", justifyContent: "center", gap: 12, marginBottom: 64 }}>
-            <Link
-              href="/"
-              style={{
-                padding: "10px 24px",
-                background: "#ffffff",
-                color: C.nightSky,
-                borderRadius: 4,
-                fontSize: 15,
-                fontWeight: 600,
-                textDecoration: "none",
-                letterSpacing: "-0.012em",
-              }}
-            >
-              Start for free
-            </Link>
-            <a
-              href="#how-it-works"
-              style={{
-                padding: "10px 24px",
-                background: "transparent",
-                color: "#ffffff",
-                borderRadius: 4,
-                fontSize: 15,
-                fontWeight: 400,
-                textDecoration: "none",
-                letterSpacing: "-0.012em",
-                border: `1px solid ${C.azure}`,
-              }}
-            >
-              See how it works →
-            </a>
-          </div>
-
-          {/* Bottom spacer so the hero has breathing room */}
-          <div style={{ height: 80 }} />
-        </div>
+      {/* ── Hero — full-screen video ────────────────────────────────── */}
+      <section style={{
+        position: "relative",
+        height: "100vh",
+        marginTop: -60,        /* pull up behind the sticky nav */
+        overflow: "hidden",
+      }}>
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+          }}
+        >
+          <source src="/hero-bg.mp4" type="video/mp4" />
+        </video>
       </section>
 
       {/* ── Features ───────────────────────────────────────────────── */}
@@ -451,25 +372,27 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── CTA Banner ─────────────────────────────────────────────── */}
-      <section style={{ position: "relative", overflow: "hidden", padding: "120px 32px" }}>
-        {/* Background image */}
-        <Image
-          src="/footer.jpeg"
-          alt=""
-          fill
-          style={{ objectFit: "cover", objectPosition: "center 30%" }}
-          priority={false}
-        />
-        {/* Dark gradient overlay so text is readable */}
+      {/* ── CTA + Footer — shared background ───────────────────────── */}
+      <section style={{ position: "relative", overflow: "hidden" }}>
+        {/* Background image — contain so the full landscape is visible */}
         <div style={{
           position: "absolute", inset: 0,
-          background: "linear-gradient(135deg, rgba(31,31,41,0.82) 0%, rgba(0,129,192,0.70) 100%)",
+          backgroundImage: "url('/footer.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center top",
+          backgroundRepeat: "no-repeat",
+        }} />
+        {/* Subtle overlay — dark enough for contrast, light enough to see landscape */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.55) 60%, rgba(31,31,41,0.92) 100%)",
         }} />
 
+        {/* CTA content */}
         <div style={{
           position: "relative", zIndex: 1,
           maxWidth: 1200, margin: "0 auto",
+          padding: "120px 32px 80px",
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
         }}>
           <h2 style={{
@@ -503,30 +426,31 @@ export default function LandingPage() {
             Get started — it's free
           </Link>
         </div>
-        <footer style={{ padding: "48px 32px", borderTop: `1px solid rgba(255,255,255,0.06)` }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 26, height: 26, borderRadius: 6, background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 12 }}>✦</span>
-            </div>
-            <span style={{ fontSize: 14, fontWeight: 500, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.012em" }}>
-              AgentFlow
-            </span>
-          </div>
-          <div style={{ display: "flex", gap: 24 }}>
-            {["Features", "How it works", "Sign in"].map((l) => (
-              <a key={l} href={l === "Sign in" ? "/" : `#${l.toLowerCase().replace(/ /g, "-")}`}
-                style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textDecoration: "none", letterSpacing: "-0.012em" }}>
-                {l}
-              </a>
-            ))}
-          </div>
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", letterSpacing: "-0.01em" }}>
-            © 2026 AgentFlow
-          </p>
-        </div>
-      </footer>
 
+        {/* Footer */}
+        <footer style={{
+          position: "relative", zIndex: 1,
+          padding: "32px 32px 40px",
+          borderTop: "1px solid rgba(255,255,255,0.08)",
+        }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 26, height: 26, borderRadius: 6, background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 12 }}>✦</span>
+              </div>
+              <span style={{ fontSize: 14, fontWeight: 500, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.012em" }}>AgentFlow</span>
+            </div>
+            <div style={{ display: "flex", gap: 24 }}>
+              {["Features", "How it works", "Sign in"].map((l) => (
+                <a key={l} href={l === "Sign in" ? "/" : `#${l.toLowerCase().replace(/ /g, "-")}`}
+                  style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textDecoration: "none", letterSpacing: "-0.012em" }}>
+                  {l}
+                </a>
+              ))}
+            </div>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", letterSpacing: "-0.01em" }}>© 2026 AgentFlow</p>
+          </div>
+        </footer>
       </section>
 
     </div>
