@@ -22,9 +22,26 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const APP_URL = "https://agent-flow-lime.vercel.app"
+
 export const metadata: Metadata = {
   title: "AgentFlow",
-  description: "Multi-agent orchestration workspace",
+  description: "Multi-agent orchestration workspace — coordinate specialist AI agents to research, write, code, and analyse in parallel.",
+  metadataBase: new URL(APP_URL),
+  openGraph: {
+    title: "AgentFlow",
+    description: "Multi-agent orchestration workspace — coordinate specialist AI agents to research, write, code, and analyse in parallel.",
+    url: APP_URL,
+    siteName: "AgentFlow",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "AgentFlow" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AgentFlow",
+    description: "Multi-agent orchestration workspace — coordinate specialist AI agents in parallel.",
+    images: ["/opengraph-image"],
+  },
 };
 
 export default function RootLayout({
