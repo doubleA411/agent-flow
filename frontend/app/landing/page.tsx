@@ -68,13 +68,47 @@ const HOW_IT_WORKS = [
   { n: "03", title: "Review agent output", body: "Each agent's response lands in the chat panel in real-time. Retry failures, save key facts to memory, or chain the output into a new task." },
 ]
 
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1"
+
+function useAnimatedCount(target: number, duration = 1200) {
+  const [display, setDisplay] = useState(0)
+  useEffect(() => {
+    if (!target) return
+    const start = Date.now()
+    const tick = () => {
+      const elapsed = Date.now() - start
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplay(Math.floor(eased * target))
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }, [target, duration])
+  return display
+}
+
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
+  const [visitorCount, setVisitorCount] = useState(0)
+  const animatedCount = useAnimatedCount(visitorCount)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 10)
     window.addEventListener("scroll", fn, { passive: true })
     return () => window.removeEventListener("scroll", fn)
+  }, [])
+
+  useEffect(() => {
+    // Increment and fetch visitor count
+    fetch(`${API}/stats/visit`, { method: "POST" })
+      .then(r => r.json())
+      .then(d => setVisitorCount(d.count ?? 0))
+      .catch(() => {
+        fetch(`${API}/stats/visitors`)
+          .then(r => r.json())
+          .then(d => setVisitorCount(d.count ?? 0))
+          .catch(() => {})
+      })
   }, [])
 
   return (
@@ -569,7 +603,16 @@ export default function LandingPage() {
                 </a>
               ))}
             </div>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", letterSpacing: "-0.01em" }}>© 2026 AgentFlow</p>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+              {visitorCount > 0 && (
+                <div style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "-0.01em" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 0 2px rgba(16,185,129,0.2)", display: "inline-block" }} />
+                  <span style={{ color: "rgba(255,255,255,0.65)", fontWeight: 500 }}>{animatedCount.toLocaleString()}</span>
+                  {" "}visitors
+                </div>
+              )}
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", letterSpacing: "-0.01em" }}>© 2026 AgentFlow</p>
+            </div>
           </div>
         </footer>
       </section>
