@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import Link from "next/link"
 
 /* ─── Design tokens ───────────────────────────────────────────────── */
@@ -70,7 +71,6 @@ const HOW_IT_WORKS = [
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 10)
@@ -243,30 +243,27 @@ export default function LandingPage() {
             </a>
           </div>
 
-          {/* Hero image placeholder */}
+          {/* Hero image */}
           <div style={{
-            background: "rgba(222,226,222,0.08)",
-            border: "1px solid rgba(222,226,222,0.15)",
             borderRadius: "24px 24px 0 0",
+            overflow: "hidden",
+            position: "relative",
             height: 480,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 12,
+            border: "1px solid rgba(222,226,222,0.12)",
+            borderBottom: "none",
           }}>
+            <Image
+              src="/astro.jpeg"
+              alt="AgentFlow hero"
+              fill
+              style={{ objectFit: "cover", objectPosition: "center" }}
+              priority
+            />
+            {/* subtle overlay to blend with dark bg */}
             <div style={{
-              width: 56, height: 56, borderRadius: 14,
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 24,
-            }}>
-              🖼
-            </div>
-            <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, letterSpacing: "-0.01em" }}>
-              Hero image — drop your screenshot here
-            </p>
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to top, rgba(31,31,41,0.6) 0%, transparent 50%)",
+            }} />
           </div>
         </div>
       </section>
