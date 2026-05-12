@@ -458,14 +458,29 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA Banner ─────────────────────────────────────────────── */}
-      <section style={{ background: C.cofBlue, padding: "96px 32px" }}>
+      <section style={{ position: "relative", overflow: "hidden", padding: "120px 32px" }}>
+        {/* Background image */}
+        <Image
+          src="/footer.jpeg"
+          alt=""
+          fill
+          style={{ objectFit: "cover", objectPosition: "center 30%" }}
+          priority={false}
+        />
+        {/* Dark gradient overlay so text is readable */}
         <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(135deg, rgba(31,31,41,0.82) 0%, rgba(0,129,192,0.70) 100%)",
+        }} />
+
+        <div style={{
+          position: "relative", zIndex: 1,
           maxWidth: 1200, margin: "0 auto",
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
         }}>
           <h2 style={{
             fontFamily: "var(--font-display), 'Instrument Serif', ui-serif, serif",
-            fontSize: 54,
+            fontSize: "clamp(40px, 5vw, 54px)",
             fontWeight: 400,
             lineHeight: 1.05,
             letterSpacing: "-0.02em",
