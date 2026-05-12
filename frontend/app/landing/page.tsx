@@ -503,10 +503,7 @@ export default function LandingPage() {
             Get started — it's free
           </Link>
         </div>
-      </section>
-
-      {/* ── Footer ─────────────────────────────────────────────────── */}
-      <footer style={{ padding: "48px 32px", borderTop: `1px solid rgba(255,255,255,0.06)` }}>
+        <footer style={{ padding: "48px 32px", borderTop: `1px solid rgba(255,255,255,0.06)` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ width: 26, height: 26, borderRadius: 6, background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -529,6 +526,8 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
+
+      </section>
 
     </div>
   )
