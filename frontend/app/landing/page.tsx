@@ -79,6 +79,31 @@ export default function LandingPage() {
 
   return (
     <div style={{ fontFamily: "var(--font-sans), ui-sans-serif, system-ui, sans-serif", color: C.darkCharcoal, background: C.canvas }}>
+    <style>{`
+      /* ── Responsive layout ── */
+      .lp-nav-links { display: flex; }
+      .lp-nav-signin { display: block; }
+      .lp-hero-ctas { flex-direction: row; }
+      .lp-section { padding: 96px 32px; }
+      .lp-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .lp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+      .lp-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+      .lp-footer-row { display: flex; align-items: center; justify-content: space-between; }
+      .lp-footer-links { display: flex; gap: 24px; }
+      .lp-connector { display: block; }
+      @media (max-width: 768px) {
+        .lp-nav-links { display: none !important; }
+        .lp-nav-signin { display: none !important; }
+        .lp-hero-ctas { flex-direction: column; align-items: center; }
+        .lp-section { padding: 64px 20px !important; }
+        .lp-grid-3 { grid-template-columns: 1fr !important; gap: 12px !important; }
+        .lp-grid-2 { grid-template-columns: 1fr !important; gap: 40px !important; }
+        .lp-steps { grid-template-columns: 1fr !important; gap: 32px !important; }
+        .lp-footer-row { flex-direction: column; gap: 20px; text-align: center; }
+        .lp-footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+        .lp-connector { display: none !important; }
+      }
+    `}</style>
 
       {/* ── Sticky Nav ─────────────────────────────────────────────── */}
       <header
@@ -100,7 +125,7 @@ export default function LandingPage() {
           </div>
 
           {/* Nav links */}
-          <nav style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <nav className="lp-nav-links" style={{ alignItems: "center", gap: 4 }}>
             {["Features", "How it works", "Agents"].map((item) => (
               <a
                 key={item}
@@ -124,6 +149,7 @@ export default function LandingPage() {
           {/* CTA */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Link
+              className="lp-nav-signin"
               href="/"
               style={{
                 padding: "6px 14px",
@@ -239,7 +265,7 @@ export default function LandingPage() {
           </p>
 
           {/* CTAs */}
-          <div style={{ display: "flex", gap: 12 }}>
+          <div className="lp-hero-ctas" style={{ display: "flex", gap: 12 }}>
             <Link href="/" style={{
               padding: "11px 28px",
               background: "#ffffff",
@@ -283,7 +309,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features ───────────────────────────────────────────────── */}
-      <section id="features" style={{ background: C.canvas, padding: "96px 32px" }}>
+      <section id="features" className="lp-section" style={{ background: C.canvas }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           {/* Label */}
           <p style={{ fontSize: 13, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: C.cofBlue, marginBottom: 16 }}>
@@ -306,7 +332,7 @@ export default function LandingPage() {
           </p>
 
           {/* Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+          <div className="lp-grid-3">
             {FEATURES.map((f) => (
               <div
                 key={f.title}
@@ -332,7 +358,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── How it works ───────────────────────────────────────────── */}
-      <section id="how-it-works" style={{ background: C.offWhite, padding: "96px 32px", borderTop: `1px solid ${C.steelGray}`, borderBottom: `1px solid ${C.steelGray}` }}>
+      <section id="how-it-works" className="lp-section" style={{ background: C.offWhite, borderTop: `1px solid ${C.steelGray}`, borderBottom: `1px solid ${C.steelGray}` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <p style={{ fontSize: 13, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: C.cofBlue, marginBottom: 16 }}>
             How it works
@@ -350,12 +376,12 @@ export default function LandingPage() {
             From one prompt to multiple outputs
           </h2>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+          <div className="lp-steps">
             {HOW_IT_WORKS.map((step, i) => (
               <div key={step.n} style={{ position: "relative" }}>
                 {/* Connector line */}
                 {i < HOW_IT_WORKS.length - 1 && (
-                  <div style={{
+                  <div className="lp-connector" style={{
                     position: "absolute",
                     top: 20, left: "calc(100% + 8px)",
                     width: "calc(100% - 16px)",
@@ -391,9 +417,9 @@ export default function LandingPage() {
       </section>
 
       {/* ── Agents ─────────────────────────────────────────────────── */}
-      <section id="agents" style={{ background: C.canvas, padding: "96px 32px" }}>
+      <section id="agents" className="lp-section" style={{ background: C.canvas }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+          <div className="lp-grid-2">
             {/* Left */}
             <div>
               <p style={{ fontSize: 13, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: C.cofBlue, marginBottom: 16 }}>
@@ -435,7 +461,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right — agent grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="lp-grid-3" style={{ gap: 12 }}>
               {AGENT_TYPES.map((a) => (
                 <div
                   key={a.type}
@@ -528,14 +554,14 @@ export default function LandingPage() {
           padding: "32px 32px 40px",
           borderTop: "1px solid rgba(255,255,255,0.08)",
         }}>
-          <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div className="lp-footer-row" style={{ maxWidth: 1200, margin: "0 auto" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 26, height: 26, borderRadius: 6, background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 12 }}>✦</span>
               </div>
               <span style={{ fontSize: 14, fontWeight: 500, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.012em" }}>AgentFlow</span>
             </div>
-            <div style={{ display: "flex", gap: 24 }}>
+            <div className="lp-footer-links">
               {["Features", "How it works", "Sign in"].map((l) => (
                 <a key={l} href={l === "Sign in" ? "/" : `#${l.toLowerCase().replace(/ /g, "-")}`}
                   style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textDecoration: "none", letterSpacing: "-0.012em" }}>
