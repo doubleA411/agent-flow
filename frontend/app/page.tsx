@@ -2003,6 +2003,77 @@ function ScheduleView({
 }
 
 /* ─────────────────────────────────────────────
+   Ollama help accordion
+   ───────────────────────────────────────────── */
+function OllamaHelp() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="mt-2 rounded-xl border border-stone-200 overflow-hidden">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-3.5 py-2.5 text-left bg-stone-50 hover:bg-stone-100 transition-colors"
+      >
+        <span className="text-[12px] font-medium text-stone-600">
+          How to get your Ollama URL?
+        </span>
+        <ChevronDown
+          size={13}
+          className={`text-stone-400 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="px-4 py-3 bg-white border-t border-stone-100 space-y-4 text-[12px] text-stone-700 leading-relaxed">
+          <p className="text-stone-500">
+            Ollama runs locally on your machine. To connect it to AgentFlow (which runs in the cloud),
+            you need to expose it via a tunnel. Choose one option below.
+          </p>
+
+          {/* Option A — ngrok */}
+          <div>
+            <p className="font-semibold text-stone-800 mb-1.5">Option A — ngrok (quickest)</p>
+            <div className="bg-stone-900 rounded-lg px-3 py-2.5 font-mono text-[11.5px] text-stone-100 space-y-1">
+              <p><span className="text-stone-500"># 1. Install ngrok</span></p>
+              <p>brew install ngrok/ngrok/ngrok</p>
+              <p className="mt-1"><span className="text-stone-500"># 2. Start your tunnel</span></p>
+              <p>ngrok http 11434</p>
+            </div>
+            <p className="mt-1.5 text-stone-500">
+              Copy the <span className="text-stone-700 font-medium">Forwarding</span> URL (e.g. <span className="font-mono">https://abc123.ngrok-free.app</span>) and paste it above.
+              The URL changes every restart unless you have a paid ngrok plan.
+            </p>
+          </div>
+
+          {/* Option B — Cloudflare Tunnel */}
+          <div>
+            <p className="font-semibold text-stone-800 mb-1.5">Option B — Cloudflare Tunnel (free, permanent)</p>
+            <div className="bg-stone-900 rounded-lg px-3 py-2.5 font-mono text-[11.5px] text-stone-100 space-y-1">
+              <p><span className="text-stone-500"># 1. Install cloudflared</span></p>
+              <p>brew install cloudflare/cloudflare/cloudflared</p>
+              <p className="mt-1"><span className="text-stone-500"># 2. Run a quick tunnel (no account needed)</span></p>
+              <p>cloudflared tunnel --url http://localhost:11434</p>
+            </div>
+            <p className="mt-1.5 text-stone-500">
+              Copy the <span className="text-stone-700 font-medium">trycloudflare.com</span> URL from the output and paste it above.
+              For a permanent URL, <a href="https://cloudflare.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">sign up free</a> and create a named tunnel.
+            </p>
+          </div>
+
+          {/* Tip */}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
+            <p className="text-amber-800">
+              <span className="font-semibold">Make sure Ollama is running</span> before starting the tunnel:
+              <span className="font-mono ml-1 bg-amber-100 px-1 rounded">ollama serve</span>
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────
    Settings view — API keys
    ───────────────────────────────────────────── */
 type ApiKeyState = {
@@ -2079,14 +2150,16 @@ function SettingsView({ token }: { token: string }) {
               <div key={key}>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-[13px] font-medium text-stone-800">{label}</label>
-                  <a
-                    href={key === "ollama_url" ? "#" : `https://${hint}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] text-stone-400 hover:text-stone-600 transition-colors"
-                  >
-                    {hint} ↗
-                  </a>
+                  {key !== "ollama_url" && (
+                    <a
+                      href={`https://${hint}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-stone-400 hover:text-stone-600 transition-colors"
+                    >
+                      {hint} ↗
+                    </a>
+                  )}
                 </div>
                 <input
                   type={key === "ollama_url" ? "url" : "password"}
@@ -2100,6 +2173,7 @@ function SettingsView({ token }: { token: string }) {
                 {keys[key] && keys[key].includes("••") && (
                   <p className="text-[11px] text-emerald-600 mt-1">Saved — type a new value to replace</p>
                 )}
+                {key === "ollama_url" && <OllamaHelp />}
               </div>
             ))}
           </div>
