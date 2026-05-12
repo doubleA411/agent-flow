@@ -100,7 +100,7 @@ type ScheduledTask = {
   created_at: string
 }
 
-type View = "canvas" | "agents" | "memory" | "schedule" | "digest"
+type View = "canvas" | "agents" | "memory" | "schedule" | "digest" | "settings"
 
 /* ─────────────────────────────────────────────
    Agent palette
@@ -324,6 +324,7 @@ const NAV_ITEMS: { id: View; icon: React.ElementType; label: string }[] = [
   { id: "memory",   icon: Brain,           label: "Memory" },
   { id: "schedule", icon: Calendar,        label: "Schedule" },
   { id: "digest",   icon: FileText,        label: "Digest" },
+  { id: "settings", icon: Settings,        label: "Settings" },
 ]
 
 function NavRail({
@@ -840,6 +841,9 @@ export default function Workspace() {
           icon={FileText}
         />
       )}
+
+      {/* ── Settings view ────────────────────────── */}
+      {view === "settings" && <SettingsView token={token} />}
 
       {/* ── Agent settings modal ─────────────────── */}
       {editing && (
@@ -1994,6 +1998,128 @@ function ScheduleView({
           })}
         </div>
       )}
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────
+   Settings view — API keys
+   ───────────────────────────────────────────── */
+type ApiKeyState = {
+  anthropic_api_key: string
+  openai_api_key: string
+  groq_api_key: string
+  ollama_url: string
+}
+
+function SettingsView({ token }: { token: string }) {
+  const [keys, setKeys] = useState<ApiKeyState>({
+    anthropic_api_key: "", openai_api_key: "", groq_api_key: "", ollama_url: "",
+  })
+  const [loaded, setLoaded] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    fetch(`${API}/settings/api-keys`, { headers: authHeaders(token) })
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => {
+        if (d) setKeys({
+          anthropic_api_key: d.anthropic_api_key ?? "",
+          openai_api_key: d.openai_api_key ?? "",
+          groq_api_key: d.groq_api_key ?? "",
+          ollama_url: d.ollama_url ?? "",
+        })
+        setLoaded(true)
+      })
+  }, [token])
+
+  async function save() {
+    setSaving(true)
+    const res = await fetch(`${API}/settings/api-keys`, {
+      method: "PUT",
+      headers: authHeaders(token),
+      body: JSON.stringify(keys),
+    })
+    if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000) }
+    setSaving(false)
+  }
+
+  const fieldClass = "w-full bg-white border border-stone-200 rounded-xl px-3.5 py-2.5 text-[13px] text-stone-900 placeholder-stone-400 focus:outline-none focus:border-stone-400 transition-colors font-mono"
+
+  const providers: { key: keyof ApiKeyState; label: string; placeholder: string; hint: string }[] = [
+    { key: "anthropic_api_key", label: "Anthropic (Claude)", placeholder: "sk-ant-api03-...", hint: "console.anthropic.com" },
+    { key: "openai_api_key",    label: "OpenAI",             placeholder: "sk-proj-...",      hint: "platform.openai.com" },
+    { key: "groq_api_key",      label: "Groq",               placeholder: "gsk_...",           hint: "console.groq.com" },
+    { key: "ollama_url",        label: "Ollama URL",         placeholder: "https://your-tunnel-url.ngrok.io", hint: "Your local Ollama exposed via ngrok or Cloudflare Tunnel" },
+  ]
+
+  if (!loaded) return (
+    <div className="flex-1 flex items-center justify-center">
+      <Loader size={20} className="animate-spin text-stone-400" />
+    </div>
+  )
+
+  return (
+    <div className="flex-1 overflow-auto">
+      <div className="px-8 pt-8 pb-6 border-b border-stone-200">
+        <h1 className="font-display text-[30px] text-stone-900 leading-none">Settings</h1>
+        <p className="text-[12.5px] text-stone-500 mt-2">
+          Your API keys are stored securely and used in place of the server defaults.
+        </p>
+      </div>
+
+      <div className="px-8 py-6 max-w-2xl space-y-6">
+        <div>
+          <h2 className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-4">
+            LLM Provider Keys
+          </h2>
+          <div className="space-y-4">
+            {providers.map(({ key, label, placeholder, hint }) => (
+              <div key={key}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[13px] font-medium text-stone-800">{label}</label>
+                  <a
+                    href={key === "ollama_url" ? "#" : `https://${hint}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-stone-400 hover:text-stone-600 transition-colors"
+                  >
+                    {hint} ↗
+                  </a>
+                </div>
+                <input
+                  type={key === "ollama_url" ? "url" : "password"}
+                  value={keys[key]}
+                  onChange={(e) => setKeys((prev) => ({ ...prev, [key]: e.target.value }))}
+                  className={fieldClass}
+                  placeholder={placeholder}
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                {keys[key] && keys[key].includes("••") && (
+                  <p className="text-[11px] text-emerald-600 mt-1">Saved — type a new value to replace</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-2">
+          <button
+            onClick={save}
+            disabled={saving}
+            className="flex items-center gap-2 bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-[13px] font-medium transition-colors"
+          >
+            {saving ? <><Loader size={13} className="animate-spin" /> Saving…</> :
+             saved  ? <><Check size={13} /> Saved</> :
+                      <><Save size={13} /> Save keys</>}
+          </button>
+          <p className="text-[11px] text-stone-400 mt-3 leading-relaxed max-w-md">
+            Leave a field empty to use the server default key. Set a field to clear it (empty string removes the saved key). Keys are masked after saving.
+          </p>
+        </div>
+      </div>
     </div>
   )
 }

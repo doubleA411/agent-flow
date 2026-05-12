@@ -55,7 +55,12 @@ def execute_run(self, run_id: str, task_prompt: str = None, message_id: str = No
         # Use task_prompt if provided (from coordinator), otherwise use agent's default prompt
         prompt = task_prompt or agent.prompt
 
-        provider = get_provider(agent.provider)
+        # Load user's own API keys if saved — override server env vars
+        from app.routers.settings import get_user_settings
+        user_settings = get_user_settings(run.user_id, db)
+
+        provider_name = agent.provider
+        provider = get_provider(provider_name, user_settings=user_settings)
         response = asyncio.run(provider.call(
             messages=[LLMMessage(role="user", content=prompt)],
             model=agent.model,

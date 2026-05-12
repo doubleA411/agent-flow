@@ -25,7 +25,8 @@ from app.models import agent
 from app.models import user
 from app.models import session
 from app.models import context as _models_context  # noqa: F401 — imported for metadata side-effect
-from app.models import task as _models_task        # noqa: F401
+from app.models import task as _models_task          # noqa: F401
+from app.models import settings as _models_settings  # noqa: F401
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
