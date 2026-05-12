@@ -160,8 +160,22 @@ export default function LandingPage() {
       </header>
 
       {/* ── Hero ───────────────────────────────────────────────────── */}
-      <section style={{ background: C.nightSky, padding: "80px 32px 0" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+      <section style={{ position: "relative", overflow: "hidden", padding: "80px 32px 0", minHeight: 680 }}>
+        {/* Background image */}
+        <Image
+          src="/astro.jpeg"
+          alt=""
+          fill
+          style={{ objectFit: "cover", objectPosition: "center" }}
+          priority
+        />
+        {/* Overlay — dark enough for text legibility, preserves image atmosphere */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(180deg, rgba(31,31,41,0.72) 0%, rgba(31,31,41,0.55) 50%, rgba(31,31,41,0.85) 100%)",
+        }} />
+
+        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
           {/* Chip */}
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
             <span style={{
@@ -243,28 +257,8 @@ export default function LandingPage() {
             </a>
           </div>
 
-          {/* Hero image */}
-          <div style={{
-            borderRadius: "24px 24px 0 0",
-            overflow: "hidden",
-            position: "relative",
-            height: 480,
-            border: "1px solid rgba(222,226,222,0.12)",
-            borderBottom: "none",
-          }}>
-            <Image
-              src="/astro.jpeg"
-              alt="AgentFlow hero"
-              fill
-              style={{ objectFit: "cover", objectPosition: "center" }}
-              priority
-            />
-            {/* subtle overlay to blend with dark bg */}
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(to top, rgba(31,31,41,0.6) 0%, transparent 50%)",
-            }} />
-          </div>
+          {/* Bottom spacer so the hero has breathing room */}
+          <div style={{ height: 80 }} />
         </div>
       </section>
 
@@ -512,7 +506,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────── */}
-      <footer style={{ background: C.nightSky, padding: "48px 32px", borderTop: `1px solid rgba(255,255,255,0.06)` }}>
+      <footer style={{ padding: "48px 32px", borderTop: `1px solid rgba(255,255,255,0.06)` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ width: 26, height: 26, borderRadius: 6, background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
