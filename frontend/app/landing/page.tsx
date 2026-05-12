@@ -84,19 +84,19 @@ export default function LandingPage() {
       <header
         style={{
           position: "sticky", top: 0, zIndex: 50,
-          background: scrolled ? "rgba(255,255,255,0.85)" : "transparent",
+          background: scrolled ? "rgba(255,255,255,0.90)" : "transparent",
           backdropFilter: scrolled ? "blur(12px)" : "none",
           borderBottom: scrolled ? `1px solid ${C.steelGray}` : "1px solid transparent",
-          transition: "all 0.2s ease",
+          transition: "background 0.25s ease, border-color 0.25s ease",
         }}
       >
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: C.nightSky, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: scrolled ? C.nightSky : "rgba(255,255,255,0.15)", border: scrolled ? "none" : "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.25s" }}>
               <span style={{ color: "#fff", fontSize: 14 }}>✦</span>
             </div>
-            <span style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em", color: C.darkCharcoal }}>AgentFlow</span>
+            <span style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em", color: scrolled ? C.darkCharcoal : "#ffffff", transition: "color 0.25s" }}>AgentFlow</span>
           </div>
 
           {/* Nav links */}
@@ -110,13 +110,11 @@ export default function LandingPage() {
                   borderRadius: 8,
                   fontSize: 14,
                   fontWeight: 400,
-                  color: C.slateGray,
+                  color: scrolled ? C.slateGray : "rgba(255,255,255,0.8)",
                   textDecoration: "none",
                   letterSpacing: "-0.012em",
-                  transition: "color 0.15s, background 0.15s",
+                  transition: "color 0.25s",
                 }}
-                onMouseEnter={(e) => { (e.target as HTMLElement).style.color = C.darkCharcoal; (e.target as HTMLElement).style.background = C.ashGray }}
-                onMouseLeave={(e) => { (e.target as HTMLElement).style.color = C.slateGray; (e.target as HTMLElement).style.background = "transparent" }}
               >
                 {item}
               </a>
@@ -131,9 +129,10 @@ export default function LandingPage() {
                 padding: "6px 14px",
                 fontSize: 14,
                 fontWeight: 400,
-                color: C.slateGray,
+                color: scrolled ? C.slateGray : "rgba(255,255,255,0.75)",
                 textDecoration: "none",
                 letterSpacing: "-0.012em",
+                transition: "color 0.25s",
               }}
             >
               Sign in
@@ -142,14 +141,16 @@ export default function LandingPage() {
               href="/"
               style={{
                 padding: "7px 16px 8px 12px",
-                background: C.nightSky,
+                background: scrolled ? C.nightSky : "rgba(255,255,255,0.15)",
                 color: "#fff",
                 borderRadius: 8,
                 fontSize: 14,
                 fontWeight: 500,
                 textDecoration: "none",
                 letterSpacing: "-0.012em",
-                border: `1px solid ${C.richBlack}`,
+                border: scrolled ? `1px solid ${C.richBlack}` : "1px solid rgba(255,255,255,0.3)",
+                backdropFilter: scrolled ? "none" : "blur(8px)",
+                transition: "background 0.25s, border-color 0.25s",
               }}
             >
               Get started →
@@ -181,6 +182,104 @@ export default function LandingPage() {
         >
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
+
+        {/* Hero content — centred over the video */}
+        <div style={{
+          position: "absolute", inset: 0,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          textAlign: "center",
+          padding: "0 32px",
+          zIndex: 1,
+        }}>
+          {/* Chip */}
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            padding: "4px 14px",
+            border: "1px solid rgba(65,161,207,0.5)",
+            borderRadius: 50,
+            fontSize: 13,
+            color: C.azure,
+            background: "rgba(65,161,207,0.1)",
+            letterSpacing: "-0.01em",
+            backdropFilter: "blur(6px)",
+            marginBottom: 28,
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.azure, display: "inline-block" }} />
+            Multi-agent AI orchestration
+          </span>
+
+          {/* Headline */}
+          <h1 style={{
+            fontFamily: "var(--font-display), 'Instrument Serif', ui-serif, serif",
+            fontSize: "clamp(40px, 6vw, 64px)",
+            fontWeight: 400,
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+            color: "#ffffff",
+            maxWidth: 820,
+            marginBottom: 20,
+            textShadow: "0 2px 20px rgba(0,0,0,0.4)",
+          }}>
+            The workspace where your agents work in parallel
+          </h1>
+
+          {/* Sub */}
+          <p style={{
+            fontSize: 18,
+            fontWeight: 400,
+            lineHeight: 1.5,
+            letterSpacing: "-0.012em",
+            color: "rgba(255,255,255,0.75)",
+            maxWidth: 520,
+            marginBottom: 40,
+            textShadow: "0 1px 8px rgba(0,0,0,0.3)",
+          }}>
+            Dispatch a single prompt. Research, finance, engineering, and sales agents execute simultaneously — coordinated and grounded in your company context.
+          </p>
+
+          {/* CTAs */}
+          <div style={{ display: "flex", gap: 12 }}>
+            <Link href="/" style={{
+              padding: "11px 28px",
+              background: "#ffffff",
+              color: C.nightSky,
+              borderRadius: 4,
+              fontSize: 15,
+              fontWeight: 600,
+              textDecoration: "none",
+              letterSpacing: "-0.012em",
+            }}>
+              Start for free
+            </Link>
+            <a href="#features" style={{
+              padding: "11px 28px",
+              background: "rgba(255,255,255,0.08)",
+              color: "#ffffff",
+              borderRadius: 4,
+              fontSize: 15,
+              fontWeight: 400,
+              textDecoration: "none",
+              letterSpacing: "-0.012em",
+              border: `1px solid ${C.azure}`,
+              backdropFilter: "blur(8px)",
+            }}>
+              See how it works →
+            </a>
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <div style={{
+          position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+          color: "rgba(255,255,255,0.4)", fontSize: 11, letterSpacing: "0.08em",
+          textTransform: "uppercase", zIndex: 1,
+        }}>
+          <span>Scroll</span>
+          <span style={{ fontSize: 16, animation: "bounce 1.8s ease-in-out infinite" }}>↓</span>
+          <style>{`@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }`}</style>
+        </div>
       </section>
 
       {/* ── Features ───────────────────────────────────────────────── */}
@@ -374,18 +473,14 @@ export default function LandingPage() {
 
       {/* ── CTA + Footer — shared background ───────────────────────── */}
       <section style={{ position: "relative", overflow: "hidden" }}>
-        {/* Background image — contain so the full landscape is visible */}
+        {/* Background image — 100% width scales naturally, no bars, no zoom */}
         <div style={{
           position: "absolute", inset: 0,
           backgroundImage: "url('/footer.jpeg')",
-          backgroundSize: "cover",
+          backgroundSize: "100% auto",
           backgroundPosition: "center top",
           backgroundRepeat: "no-repeat",
-        }} />
-        {/* Subtle overlay — dark enough for contrast, light enough to see landscape */}
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.55) 60%, rgba(31,31,41,0.92) 100%)",
+          backgroundColor: C.nightSky,
         }} />
 
         {/* CTA content */}
